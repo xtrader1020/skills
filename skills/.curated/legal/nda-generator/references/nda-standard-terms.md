@@ -145,10 +145,13 @@ Information is NOT confidential if it:
 - Cannot restrict reporting suspected illegal activity
 - Very employee-friendly; be careful with broad restrictions
 
-**Employee NDAs - Required Notice** (18 U.S.C. § 1833(b)):
+**Employee NDAs - Required Notice**
+
+Under the Defend Trade Secrets Act of 2016, 18 U.S.C. § 1833(b), the following notice must be included in employee NDAs:
+
 > "An individual shall not be held criminally or civilly liable under any Federal or State trade secret law for the disclosure of a trade secret that (A) is made (i) in confidence to a Federal, State, or local government official, either directly or indirectly, or to an attorney; and (ii) solely for the purpose of reporting or investigating a suspected violation of law; or (B) is made in a complaint or other document filed in a lawsuit or other proceeding, if such filing is made under seal."
 
-**Best Practice**: Include this notice verbatim in all employee NDAs to comply with DTSA.
+**Best Practice**: Include this statutory notice verbatim in all employee NDAs to comply with DTSA requirements.
 
 ### European Union
 

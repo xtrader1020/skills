@@ -17,7 +17,7 @@ import os
 import re
 import sys
 from pathlib import Path
-from typing import Dict, List, Optional, Set
+from typing import Dict, List, Optional
 
 
 # Supported legal domains
@@ -220,7 +220,13 @@ def find_existing_skills(components: Dict[str, Optional[str]]) -> List[Dict[str,
             pass
     
     # Check curated legal skills directory
-    curated_legal = Path(__file__).parent.parent.parent / ".curated" / "legal"
+    # Try to find curated legal skills relative to script, or use environment variable
+    curated_legal_env = os.getenv("LEGAL_SKILLS_PATH")
+    if curated_legal_env:
+        curated_legal = Path(curated_legal_env)
+    else:
+        curated_legal = Path(__file__).parent.parent.parent / ".curated" / "legal"
+    
     if curated_legal.exists():
         for skill_dir in curated_legal.iterdir():
             if skill_dir.is_dir():

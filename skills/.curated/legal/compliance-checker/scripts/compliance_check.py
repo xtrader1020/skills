@@ -160,9 +160,18 @@ def load_text_file(file_path: Path) -> str:
         return ""
 
 
-def check_requirement(text: str, patterns: List[str]) -> Tuple[str, List[str]]:
+# Compliance thresholds - can be overridden per regulation
+COMPLIANCE_THRESHOLD = 0.7  # 70% of patterns must match for "compliant" status
+
+
+def check_requirement(text: str, patterns: List[str], threshold: float = COMPLIANCE_THRESHOLD) -> Tuple[str, List[str]]:
     """
     Check if text meets a requirement based on patterns.
+    
+    Args:
+        text: Text to check
+        patterns: List of regex patterns to match
+        threshold: Fraction of patterns that must match for "compliant" status (default: 0.7)
     
     Returns:
         Tuple of (status, matched_patterns)
@@ -175,7 +184,7 @@ def check_requirement(text: str, patterns: List[str]) -> Tuple[str, List[str]]:
         if re.search(pattern, text_lower, re.IGNORECASE):
             matches.append(pattern)
     
-    if len(matches) >= len(patterns) * 0.7:  # 70% threshold for compliant
+    if len(matches) >= len(patterns) * threshold:
         return "compliant", matches
     elif len(matches) > 0:
         return "partial", matches

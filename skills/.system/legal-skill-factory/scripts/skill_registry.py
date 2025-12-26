@@ -24,13 +24,14 @@ Usage:
 
 import argparse
 import json
+import os
 import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
 
 
-REGISTRY_PATH = Path.home() / ".codex" / "legal-skill-registry.json"
+REGISTRY_PATH = Path(os.getenv("LEGAL_SKILLS_REGISTRY", str(Path.home() / ".codex" / "legal-skill-registry.json")))
 
 
 def load_registry() -> Dict:

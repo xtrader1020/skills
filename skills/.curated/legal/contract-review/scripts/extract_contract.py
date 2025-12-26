@@ -138,10 +138,9 @@ def extract_text_from_file(file_path: Path) -> str:
                     text += page.extract_text() + "\n"
                 return text
         except ImportError:
-            print("Warning: PyPDF2 not installed. Install with: pip install PyPDF2", file=sys.stderr)
-            print("Attempting to read as plain text...", file=sys.stderr)
-            with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
-                return f.read()
+            print("Error: PyPDF2 is required for PDF processing. Install with: pip install PyPDF2", file=sys.stderr)
+            print("Cannot process PDF files without PyPDF2.", file=sys.stderr)
+            sys.exit(1)
     
     elif suffix == ".docx":
         try:
@@ -149,10 +148,9 @@ def extract_text_from_file(file_path: Path) -> str:
             doc = docx.Document(file_path)
             return "\n".join([para.text for para in doc.paragraphs])
         except ImportError:
-            print("Warning: python-docx not installed. Install with: pip install python-docx", file=sys.stderr)
-            print("Attempting to read as plain text...", file=sys.stderr)
-            with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
-                return f.read()
+            print("Error: python-docx is required for DOCX processing. Install with: pip install python-docx", file=sys.stderr)
+            print("Cannot process DOCX files without python-docx.", file=sys.stderr)
+            sys.exit(1)
     
     else:
         raise ValueError(f"Unsupported file format: {suffix}")
