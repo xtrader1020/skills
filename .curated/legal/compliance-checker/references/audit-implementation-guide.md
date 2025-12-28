@@ -549,32 +549,39 @@ class ComplianceMetrics:
 def calculate_metrics(db, start_date: datetime, end_date: datetime) -> ComplianceMetrics:
     """Calculate compliance metrics for a time period"""
     
-    # Request metrics
-    requests = db.query("""
+    # Request counts by type and status
+    request_counts = db.query("""
         SELECT 
             COUNT(*) as total,
             request_type,
-            status,
-            days_to_respond
+            status
         FROM consumer_requests
         WHERE submission_date BETWEEN %s AND %s
         GROUP BY request_type, status
     """, (start_date, end_date))
     
-    total_requests = sum(r['total'] for r in requests)
+    total_requests = sum(r['total'] for r in request_counts)
     requests_by_type = {}
     completed = 0
     denied = 0
-    response_times = []
     
-    for r in requests:
+    for r in request_counts:
         requests_by_type[r['request_type']] = requests_by_type.get(r['request_type'], 0) + r['total']
         if r['status'] == 'completed':
             completed += r['total']
-            if r['days_to_respond']:
-                response_times.append(r['days_to_respond'])
         elif r['status'] == 'denied':
             denied += r['total']
+    
+    # Get response times for completed requests
+    response_time_data = db.query("""
+        SELECT days_to_respond
+        FROM consumer_requests
+        WHERE submission_date BETWEEN %s AND %s
+        AND status = 'completed'
+        AND days_to_respond IS NOT NULL
+    """, (start_date, end_date))
+    
+    response_times = [r['days_to_respond'] for r in response_time_data]
     
     # Calculate median properly for both odd and even length lists
     if response_times:
@@ -872,8 +879,7 @@ class TestRequestDeadlineRule:
             'request_id': 'req-123',
             'consumer_id': 'consumer-456',
             'request_type': 'delete',
-            'submission_date': datetime.now() - timedelta(days=50),
-            'days_elapsed': 50
+            'submission_date': datetime.now() - timedelta(days=50)
         }])
         
         result = rule.validate({'database': mock_db})
@@ -891,8 +897,7 @@ class TestRequestDeadlineRule:
             'request_id': 'req-789',
             'consumer_id': 'consumer-101',
             'request_type': 'know',
-            'submission_date': datetime.now() - timedelta(days=42),
-            'days_elapsed': 42
+            'submission_date': datetime.now() - timedelta(days=42)
         }])
         
         result = rule.validate({'database': mock_db})
@@ -909,8 +914,7 @@ class TestRequestDeadlineRule:
             'request_id': 'req-999',
             'consumer_id': 'consumer-888',
             'request_type': 'know',
-            'submission_date': datetime.now() - timedelta(days=20),
-            'days_elapsed': 20
+            'submission_date': datetime.now() - timedelta(days=20)
         }])
         
         result = rule.validate({'database': mock_db})
