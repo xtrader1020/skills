@@ -2,7 +2,7 @@
 
 ## Overview
 
-The California Consumer Privacy Act (CCPA) is California's comprehensive privacy law that went into effect on January 1, 2020. It was amended by the California Privacy Rights Act (CPRA) which took full effect on January 1, 2023.
+The California Consumer Privacy Act (CCPA) is California's comprehensive privacy law that went into effect on January 1, 2020. It was amended by the California Privacy Rights Act (CPRA), with most provisions taking effect on January 1, 2023, and enforcement by the California Privacy Protection Agency beginning July 1, 2023.
 
 **Applies to**: Businesses that:
 - Have gross annual revenues exceeding $25 million; OR
@@ -239,7 +239,7 @@ The California Consumer Privacy Act (CCPA) is California's comprehensive privacy
 - [ ] Do not collect additional categories without providing new notice
 - [ ] Do not use for purposes incompatible with disclosed purposes
 
-**CPRA Addition** (In effect since 2023):
+**CPRA Addition** (Effective January 1, 2023):
 - [ ] Limit collection to what is reasonably necessary and proportionate
 - [ ] Avoid collecting information when purpose can be achieved with less intrusive means
 
@@ -332,7 +332,7 @@ The California Consumer Privacy Act (CCPA) is California's comprehensive privacy
 
 **California Privacy Protection Agency (CPPA)**:
 - New enforcement agency created by CPRA
-- Began operations July 2021
+- Formally established July 1, 2021; enforcement authority began July 1, 2023
 - Has rulemaking and enforcement authority
 
 ## Quick Checklist
