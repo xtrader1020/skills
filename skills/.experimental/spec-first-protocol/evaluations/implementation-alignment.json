@@ -1,0 +1,260 @@
+{
+  "name": "Implementation-Specification Alignment",
+  "description": "Evaluation criteria for checking if implementation matches specification",
+  "version": "1.0",
+  "criteria": {
+    "requirements_coverage": {
+      "weight": 30,
+      "description": "Are all requirements from the spec implemented?",
+      "checks": [
+        {
+          "name": "All must-have requirements implemented",
+          "points": 10,
+          "question": "Are all 'must have' requirements implemented and working?"
+        },
+        {
+          "name": "Acceptance criteria met",
+          "points": 10,
+          "question": "Do all acceptance criteria pass?"
+        },
+        {
+          "name": "Edge cases handled",
+          "points": 5,
+          "question": "Are edge cases from the spec properly handled?"
+        },
+        {
+          "name": "Error scenarios covered",
+          "points": 5,
+          "question": "Are error scenarios implemented as specified?"
+        }
+      ]
+    },
+    "api_contract_compliance": {
+      "weight": 20,
+      "description": "Does the implementation match specified interfaces?",
+      "checks": [
+        {
+          "name": "API endpoints match spec",
+          "points": 5,
+          "question": "Do API endpoints use the specified paths, methods, and parameters?"
+        },
+        {
+          "name": "Request/response formats match",
+          "points": 5,
+          "question": "Do request and response structures match the spec?"
+        },
+        {
+          "name": "Error responses match",
+          "points": 5,
+          "question": "Do error responses use the specified formats and codes?"
+        },
+        {
+          "name": "Data types match",
+          "points": 5,
+          "question": "Do data types match the specification?"
+        }
+      ]
+    },
+    "data_model_alignment": {
+      "weight": 15,
+      "description": "Does the data layer match the spec?",
+      "checks": [
+        {
+          "name": "Database schema matches",
+          "points": 5,
+          "question": "If applicable, does the schema match specified tables, columns, types?"
+        },
+        {
+          "name": "Constraints implemented",
+          "points": 5,
+          "question": "Are constraints (unique, foreign keys, etc.) as specified?"
+        },
+        {
+          "name": "Indexes created",
+          "points": 5,
+          "question": "Are the specified indexes created?"
+        }
+      ]
+    },
+    "security_compliance": {
+      "weight": 15,
+      "description": "Are security requirements from the spec met?",
+      "checks": [
+        {
+          "name": "Authentication implemented",
+          "points": 5,
+          "question": "Is authentication implemented as specified?"
+        },
+        {
+          "name": "Authorization checks in place",
+          "points": 5,
+          "question": "Are authorization rules enforced as specified?"
+        },
+        {
+          "name": "Input validation implemented",
+          "points": 5,
+          "question": "Is input validation implemented as specified?"
+        }
+      ]
+    },
+    "performance_compliance": {
+      "weight": 10,
+      "description": "Are performance requirements met?",
+      "checks": [
+        {
+          "name": "Response times meet targets",
+          "points": 5,
+          "question": "Do response times meet or exceed specified targets?"
+        },
+        {
+          "name": "Resource usage within limits",
+          "points": 5,
+          "question": "Is resource usage (CPU, memory, database) within specified limits?"
+        }
+      ]
+    },
+    "testing_alignment": {
+      "weight": 10,
+      "description": "Does testing match the test strategy?",
+      "checks": [
+        {
+          "name": "Test coverage as specified",
+          "points": 3,
+          "question": "Are the specified test types (unit, integration, e2e) implemented?"
+        },
+        {
+          "name": "Test scenarios from spec covered",
+          "points": 4,
+          "question": "Are the test scenarios listed in the spec covered?"
+        },
+        {
+          "name": "Tests pass",
+          "points": 3,
+          "question": "Do all tests pass successfully?"
+        }
+      ]
+    }
+  },
+  "deviations": {
+    "description": "How to handle deviations from the spec",
+    "categories": {
+      "justified_deviation": {
+        "description": "Implementation differs from spec for valid reasons",
+        "requirements": [
+          "Deviation is documented in code comments or ADR",
+          "Rationale for deviation is clear",
+          "Deviation improves on the spec (security, performance, simplicity)",
+          "Spec is updated to reflect the deviation"
+        ]
+      },
+      "improvement": {
+        "description": "Implementation adds improvements not in the spec",
+        "requirements": [
+          "Improvements don't break spec requirements",
+          "Improvements are documented",
+          "Improvements are valuable (not gold-plating)"
+        ]
+      },
+      "unjustified_deviation": {
+        "description": "Implementation differs from spec without good reason",
+        "requirements": [
+          "Must be corrected to match spec, OR",
+          "Spec must be updated and re-approved"
+        ]
+      }
+    }
+  },
+  "checklist": {
+    "description": "Use this checklist to verify implementation alignment",
+    "items": [
+      {
+        "category": "Functional",
+        "checks": [
+          "All must-have requirements are implemented",
+          "All acceptance criteria pass",
+          "Edge cases are handled as specified",
+          "Error handling matches spec"
+        ]
+      },
+      {
+        "category": "Technical",
+        "checks": [
+          "Architecture matches high-level design",
+          "APIs match specified interfaces",
+          "Data models match schema",
+          "Dependencies are as specified"
+        ]
+      },
+      {
+        "category": "Quality",
+        "checks": [
+          "Tests cover spec scenarios",
+          "Performance meets targets",
+          "Security requirements implemented",
+          "Code follows specified patterns"
+        ]
+      },
+      {
+        "category": "Documentation",
+        "checks": [
+          "Code comments reference spec sections",
+          "Deviations are documented",
+          "API documentation matches spec",
+          "README is updated if needed"
+        ]
+      },
+      {
+        "category": "Operations",
+        "checks": [
+          "Deployment plan was followed",
+          "Monitoring is in place as specified",
+          "Rollback plan is tested",
+          "Configuration matches spec"
+        ]
+      }
+    ]
+  },
+  "scoring": {
+    "perfect_alignment": {
+      "range": [95, 100],
+      "label": "Perfect Alignment",
+      "description": "Implementation exactly matches specification"
+    },
+    "strong_alignment": {
+      "range": [85, 94],
+      "label": "Strong Alignment",
+      "description": "Implementation matches spec with minor acceptable deviations"
+    },
+    "moderate_alignment": {
+      "range": [70, 84],
+      "label": "Moderate Alignment",
+      "description": "Implementation mostly matches spec but has some gaps"
+    },
+    "weak_alignment": {
+      "range": [0, 69],
+      "label": "Weak Alignment",
+      "description": "Significant misalignment between implementation and spec"
+    }
+  },
+  "remediation": {
+    "weak_alignment": [
+      "Review all requirements against implementation",
+      "Identify missing or incorrect implementations",
+      "Create tasks to fix each misalignment",
+      "Update spec if implementation is intentionally different",
+      "Re-validate after fixes"
+    ],
+    "moderate_alignment": [
+      "Document all deviations from spec",
+      "Evaluate if deviations are improvements or problems",
+      "Fix problematic deviations",
+      "Update spec for justified improvements",
+      "Improve test coverage for weak areas"
+    ],
+    "strong_alignment": [
+      "Document minor deviations",
+      "Consider updating spec if improvements were made",
+      "Ensure all deviations have clear rationale"
+    ]
+  }
+}
