@@ -317,17 +317,17 @@ class RequestDeadlineRule(ValidationRule):
         db = context['database']
         today = datetime.now()
         
-        # Query open requests
+        # Query open requests (database-agnostic approach)
         open_requests = db.query("""
-            SELECT request_id, consumer_id, request_type, submission_date,
-                   DATEDIFF(CURDATE(), submission_date) as days_elapsed
+            SELECT request_id, consumer_id, request_type, submission_date
             FROM consumer_requests
             WHERE status NOT IN ('completed', 'denied')
         """)
         
         findings = []
         for request in open_requests:
-            days = request['days_elapsed']
+            # Calculate days elapsed in Python for database portability
+            days = (today - request['submission_date']).days
             
             if days >= 45:
                 findings.append({
@@ -412,14 +412,15 @@ class DataRetentionRule(ValidationRule):
         
         for category in data_inventory.get_categories():
             retention_days = category['retention_period_days']
+            cutoff_date = datetime.now() - timedelta(days=retention_days)
             
-            # Query for data exceeding retention
+            # Query for data exceeding retention (database-agnostic)
             expired_data = db.query(f"""
                 SELECT COUNT(*) as count, MIN(collection_date) as oldest
                 FROM {category['table_name']}
-                WHERE collection_date < DATE_SUB(CURDATE(), INTERVAL {retention_days} DAY)
+                WHERE collection_date < %s
                 AND deletion_date IS NULL
-            """)
+            """, (cutoff_date,))
             
             if expired_data['count'] > 0:
                 findings.append({
@@ -575,7 +576,17 @@ def calculate_metrics(db, start_date: datetime, end_date: datetime) -> Complianc
         elif r['status'] == 'denied':
             denied += r['total']
     
-    median_response = sorted(response_times)[len(response_times)//2] if response_times else 0
+    # Calculate median properly for both odd and even length lists
+    if response_times:
+        sorted_times = sorted(response_times)
+        n = len(sorted_times)
+        if n % 2 == 0:
+            median_response = (sorted_times[n//2 - 1] + sorted_times[n//2]) / 2.0
+        else:
+            median_response = sorted_times[n//2]
+    else:
+        median_response = 0
+    
     on_time_rate = len([t for t in response_times if t <= 45]) / len(response_times) if response_times else 1.0
     
     # Compliance findings
