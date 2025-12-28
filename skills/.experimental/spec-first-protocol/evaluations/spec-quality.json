@@ -1,0 +1,222 @@
+{
+  "name": "Specification Quality Evaluation",
+  "description": "Criteria for evaluating the quality and completeness of a specification",
+  "version": "1.0",
+  "criteria": {
+    "clarity": {
+      "weight": 20,
+      "description": "How clear and understandable is the specification?",
+      "checks": [
+        {
+          "name": "Problem statement is clear",
+          "points": 4,
+          "question": "Is the problem being solved clearly stated in 1-3 sentences?"
+        },
+        {
+          "name": "No ambiguous terms",
+          "points": 4,
+          "question": "Are all terms clearly defined or commonly understood?"
+        },
+        {
+          "name": "Examples provided",
+          "points": 4,
+          "question": "Are concrete examples provided for complex concepts?"
+        },
+        {
+          "name": "Diagrams included",
+          "points": 4,
+          "question": "Are diagrams or visual aids used where helpful?"
+        },
+        {
+          "name": "Scope is clear",
+          "points": 4,
+          "question": "Is it obvious what's in scope and out of scope?"
+        }
+      ]
+    },
+    "completeness": {
+      "weight": 25,
+      "description": "Does the spec contain all necessary information?",
+      "checks": [
+        {
+          "name": "Requirements documented",
+          "points": 5,
+          "question": "Are all functional and non-functional requirements listed?"
+        },
+        {
+          "name": "Acceptance criteria defined",
+          "points": 5,
+          "question": "Does each requirement have testable acceptance criteria?"
+        },
+        {
+          "name": "Technical design specified",
+          "points": 5,
+          "question": "Is the technical approach documented with sufficient detail?"
+        },
+        {
+          "name": "Edge cases considered",
+          "points": 5,
+          "question": "Are edge cases and error scenarios addressed?"
+        },
+        {
+          "name": "Dependencies identified",
+          "points": 5,
+          "question": "Are all dependencies (internal, external, blocking) listed?"
+        }
+      ]
+    },
+    "technical_detail": {
+      "weight": 20,
+      "description": "Is the technical design sufficiently detailed?",
+      "checks": [
+        {
+          "name": "Architecture documented",
+          "points": 4,
+          "question": "Is the high-level architecture described with diagrams?"
+        },
+        {
+          "name": "Interfaces specified",
+          "points": 4,
+          "question": "Are APIs, functions, or interfaces fully defined?"
+        },
+        {
+          "name": "Data models defined",
+          "points": 4,
+          "question": "Are data structures and schemas specified?"
+        },
+        {
+          "name": "Error handling addressed",
+          "points": 4,
+          "question": "Is error handling strategy documented?"
+        },
+        {
+          "name": "Performance considerations",
+          "points": 4,
+          "question": "Are performance requirements and constraints addressed?"
+        }
+      ]
+    },
+    "testability": {
+      "weight": 15,
+      "description": "Can the spec be validated through testing?",
+      "checks": [
+        {
+          "name": "Acceptance criteria are testable",
+          "points": 5,
+          "question": "Can acceptance criteria be verified objectively?"
+        },
+        {
+          "name": "Test strategy defined",
+          "points": 5,
+          "question": "Is the testing approach (unit, integration, e2e) specified?"
+        },
+        {
+          "name": "Success metrics quantified",
+          "points": 5,
+          "question": "Are success metrics measurable and specific?"
+        }
+      ]
+    },
+    "security": {
+      "weight": 10,
+      "description": "Are security considerations addressed?",
+      "checks": [
+        {
+          "name": "Authentication specified",
+          "points": 3,
+          "question": "If applicable, is authentication approach documented?"
+        },
+        {
+          "name": "Authorization defined",
+          "points": 3,
+          "question": "If applicable, are authorization rules specified?"
+        },
+        {
+          "name": "Input validation",
+          "points": 2,
+          "question": "Is input validation strategy documented?"
+        },
+        {
+          "name": "Data protection",
+          "points": 2,
+          "question": "Are sensitive data handling requirements specified?"
+        }
+      ]
+    },
+    "operations": {
+      "weight": 10,
+      "description": "Are operational concerns addressed?",
+      "checks": [
+        {
+          "name": "Deployment plan",
+          "points": 3,
+          "question": "Is the deployment approach specified?"
+        },
+        {
+          "name": "Monitoring strategy",
+          "points": 3,
+          "question": "Are monitoring and alerting requirements defined?"
+        },
+        {
+          "name": "Rollback plan",
+          "points": 2,
+          "question": "Is there a rollback or recovery plan?"
+        },
+        {
+          "name": "Performance targets",
+          "points": 2,
+          "question": "Are performance targets and SLOs specified?"
+        }
+      ]
+    }
+  },
+  "scoring": {
+    "excellent": {
+      "range": [90, 100],
+      "label": "Excellent",
+      "description": "Specification is comprehensive, clear, and ready for implementation"
+    },
+    "good": {
+      "range": [75, 89],
+      "label": "Good",
+      "description": "Specification is solid with minor gaps that should be addressed"
+    },
+    "fair": {
+      "range": [60, 74],
+      "label": "Fair",
+      "description": "Specification needs work in several areas before implementation"
+    },
+    "poor": {
+      "range": [0, 59],
+      "label": "Poor",
+      "description": "Specification has significant gaps and needs major revision"
+    }
+  },
+  "recommendations": {
+    "below_60": [
+      "Review the spec template and ensure all sections are completed",
+      "Add concrete examples for complex concepts",
+      "Define testable acceptance criteria for all requirements",
+      "Document technical design with architecture diagrams",
+      "Consider security, performance, and operational requirements"
+    ],
+    "60_to_74": [
+      "Fill in remaining gaps in requirements and design",
+      "Add more technical detail for complex components",
+      "Ensure all edge cases are considered",
+      "Define monitoring and operational requirements",
+      "Get stakeholder feedback on unclear areas"
+    ],
+    "75_to_89": [
+      "Address remaining minor gaps",
+      "Add more concrete examples if helpful",
+      "Verify all acceptance criteria are testable",
+      "Consider adding decision records for key choices"
+    ],
+    "90_plus": [
+      "Specification is ready for implementation",
+      "Share with team for final review",
+      "Track implementation against the spec"
+    ]
+  }
+}
