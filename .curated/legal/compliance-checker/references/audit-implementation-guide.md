@@ -101,8 +101,10 @@ Review current privacy policy against CCPA requirements:
 
 Implement a system to track consumer requests:
 
+**PostgreSQL Schema:**
+
 ```sql
--- Database schema for request tracking
+-- Database schema for request tracking (PostgreSQL)
 CREATE TABLE consumer_requests (
     request_id UUID PRIMARY KEY,
     consumer_id VARCHAR(255) NOT NULL,
@@ -119,17 +121,75 @@ CREATE TABLE consumer_requests (
     assigned_to VARCHAR(255),
     notes TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_submission_date ON consumer_requests(submission_date);
+CREATE INDEX idx_status ON consumer_requests(status);
+CREATE INDEX idx_consumer_id ON consumer_requests(consumer_id);
+CREATE INDEX idx_request_type ON consumer_requests(request_type);
+
+-- Trigger for updated_at (PostgreSQL)
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+CREATE TRIGGER update_consumer_requests_updated_at BEFORE UPDATE
+    ON consumer_requests FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+-- Audit log for request actions (PostgreSQL)
+CREATE TABLE request_audit_log (
+    log_id BIGSERIAL PRIMARY KEY,
+    request_id UUID NOT NULL,
+    timestamp TIMESTAMP NOT NULL,
+    action VARCHAR(100) NOT NULL,
+    actor VARCHAR(255) NOT NULL,
+    details JSONB,
+    ip_address VARCHAR(45),
+    user_agent TEXT,
+    FOREIGN KEY (request_id) REFERENCES consumer_requests(request_id)
+);
+
+CREATE INDEX idx_request_id ON request_audit_log(request_id);
+CREATE INDEX idx_timestamp ON request_audit_log(timestamp);
+```
+
+**MySQL Schema:**
+
+```sql
+-- Database schema for request tracking (MySQL)
+CREATE TABLE consumer_requests (
+    request_id CHAR(36) PRIMARY KEY,
+    consumer_id VARCHAR(255) NOT NULL,
+    request_type VARCHAR(50) NOT NULL, -- 'know', 'delete', 'correct', 'opt_out', 'limit_sensitive'
+    submission_date TIMESTAMP NOT NULL,
+    submission_method VARCHAR(50), -- 'web_form', 'email', 'phone', 'mail'
+    status VARCHAR(50) NOT NULL, -- 'received', 'verifying', 'processing', 'completed', 'denied'
+    response_date TIMESTAMP NULL,
+    response_method VARCHAR(50),
+    days_to_respond INTEGER,
+    denial_reason TEXT,
+    verification_method VARCHAR(100),
+    verification_date TIMESTAMP NULL,
+    assigned_to VARCHAR(255),
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_submission_date (submission_date),
     INDEX idx_status (status),
     INDEX idx_consumer_id (consumer_id),
     INDEX idx_request_type (request_type)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Audit log for request actions
+-- Audit log for request actions (MySQL)
 CREATE TABLE request_audit_log (
     log_id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    request_id UUID NOT NULL,
+    request_id CHAR(36) NOT NULL,
     timestamp TIMESTAMP NOT NULL,
     action VARCHAR(100) NOT NULL,
     actor VARCHAR(255) NOT NULL,
@@ -139,7 +199,7 @@ CREATE TABLE request_audit_log (
     FOREIGN KEY (request_id) REFERENCES consumer_requests(request_id),
     INDEX idx_request_id (request_id),
     INDEX idx_timestamp (timestamp)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 ```
 
 ## Phase 2: Core Audit Infrastructure (Weeks 3-4)
@@ -158,6 +218,25 @@ class ComplianceEventCollector:
     def __init__(self, event_bus, audit_log_store):
         self.event_bus = event_bus
         self.audit_log_store = audit_log_store
+    
+    def _generate_id(self) -> str:
+        """Generate unique event ID"""
+        import uuid
+        return str(uuid.uuid4())
+    
+    def _get_source_info(self) -> Dict[str, Any]:
+        """Get information about the event source"""
+        import socket
+        return {
+            'hostname': socket.gethostname(),
+            'service': 'compliance-audit',
+            'version': '1.0'
+        }
+    
+    def _hash_identifier(self, identifier: str) -> str:
+        """Hash sensitive identifiers for privacy"""
+        import hashlib
+        return hashlib.sha256(identifier.encode()).hexdigest()
     
     def log_event(self, event_type: str, details: Dict[str, Any]):
         """Log a compliance event with full context"""
@@ -761,6 +840,16 @@ audit_api.log_data_access({
 import pytest
 from datetime import datetime, timedelta
 from validation_rules import RequestDeadlineRule
+from typing import List, Dict, Any
+
+class MockDatabase:
+    """Mock database for testing validation rules"""
+    def __init__(self, mock_data: List[Dict[str, Any]]):
+        self.mock_data = mock_data
+    
+    def query(self, sql: str, params: tuple = None):
+        """Return mock data for queries"""
+        return self.mock_data
 
 class TestRequestDeadlineRule:
     def test_critical_finding_past_deadline(self):
@@ -800,6 +889,23 @@ class TestRequestDeadlineRule:
         assert not result['passed']
         assert result['findings'][0]['severity'] == 'high'
         assert result['findings'][0]['days_remaining'] == 3
+    
+    def test_no_findings_for_recent_requests(self):
+        """Test that recent requests generate no findings"""
+        rule = RequestDeadlineRule()
+        
+        mock_db = MockDatabase([{
+            'request_id': 'req-999',
+            'consumer_id': 'consumer-888',
+            'request_type': 'know',
+            'submission_date': datetime.now() - timedelta(days=20),
+            'days_elapsed': 20
+        }])
+        
+        result = rule.validate({'database': mock_db})
+        
+        assert result['passed']
+        assert len(result['findings']) == 0
 ```
 
 ## Troubleshooting Guide
