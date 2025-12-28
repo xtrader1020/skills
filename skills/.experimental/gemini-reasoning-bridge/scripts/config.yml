@@ -1,0 +1,65 @@
+# Gemini Reasoning Bridge 2.0 Configuration
+# Schema-first implementation with Hardened Legal Toolchain and Contractor Model
+
+# GLOBAL SETTINGS
+logging_layer: persistent_json_state
+versioning_layer: sha256_fingerprinting
+validation_layer: ci_cd_truth_gate
+
+# NODE: EVIDENCE MANAGER (Gemini 3 Pro)
+evidence_manager:
+  model: gemini-3-pro
+  temperature: 0.3
+  context_window: 2000000  # 2M tokens
+  schema_version: EvidenceItem_v1
+  anchor_points: 14  # For multimodal inputs
+
+# NODE: CONTEXT GARDENER (Gemini 3 Pro)
+context_gardener:
+  model: gemini-3-pro
+  temperature: 0.3
+  signal_to_noise_threshold: 0.7
+  ranking_method: anchor_and_pivot
+
+# NODE: STRUCTURAL DRAFTER
+structural_drafter:
+  model: gemini-3-pro
+  temperature: 0.5
+  schema_version: SentenceRow_v1
+  mandate_evidence_pinpoint: true
+  trace_map_required: true
+
+# NODE: SOCRATIC CRITIC (GPT-5.2)
+socratic_critic:
+  model: gpt-5.2
+  temperature: 1.0  # Essential for Monte Carlo diversity in logic auditing
+  reasoning_efforts: high
+  top_p: 0.9
+  ccc_threshold: 0.95  # The Hard Gate (Pass/Fail)
+  audit_method: anti_thesis
+  logic_inversion: true
+
+# NODE: SOVEREIGN BUILDER (Qwen3-Next)
+sovereign_builder:
+  model: qwen3-next
+  temperature: 0.0  # Zero randomness for deterministic code
+  spec_first: true  # Hard-coded protocol lock
+  require_spec_hash: true
+  architecture_ledger_validation: true
+
+# PIPELINE CONFIGURATION
+pipeline:
+  persona_isolation: true  # Separate prompts for each agent
+  producer_critic_topology: true
+  zero_hallucination_protocol: true
+  revise_loop_enabled: true
+  max_revision_cycles: 3
+
+# CANONICAL OBJECTS SCHEMAS
+schemas:
+  evidence_item_version: v1
+  sentence_row_version: v1
+  audit_report_version: v1
+  claim_ledger_version: v1
+  architecture_ledger_version: v1
+  spec_document_version: v1
